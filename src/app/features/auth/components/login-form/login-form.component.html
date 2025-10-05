@@ -1,7 +1,6 @@
 <mat-card class="login-card">
   <mat-card-header>
     <div class="card-header-content">
-      <mat-icon class="login-icon">login</mat-icon>
       <h2 class="login-title">Welcome Back</h2>
       <p class="login-subtitle">Sign in to your account</p>
     </div>
@@ -25,7 +24,6 @@
           autocomplete="username"
           [disabled]="isLoading"
         />
-        <mat-icon matPrefix>person</mat-icon>
         @if (loginForm.controls['identifier'].hasError('required')) {
           <mat-error>Email or username is required</mat-error>
         }
@@ -44,7 +42,6 @@
           autocomplete="current-password"
           [disabled]="isLoading"
         />
-        <mat-icon matPrefix>lock</mat-icon>
         <button
           mat-icon-button
           matSuffix
@@ -77,10 +74,7 @@
           </ng-container>
         }
         @if (!isLoading) {
-          <ng-container>
-            <mat-icon>login</mat-icon>
-            <span>Sign In</span>
-          </ng-container>
+          <span>Sign In</span>
         }
       </button>
     </form>
