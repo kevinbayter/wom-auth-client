@@ -40,6 +40,9 @@ Cliente de autenticación Angular 18 para WOM Auth Service. Implementa autentica
 git clone https://github.com/kevinbayter/wom-auth-client.git
 cd wom-auth-client
 
+# Usar la versión correcta de Node.js (requiere nvm)
+nvm use
+
 # Instalar dependencias
 pnpm install
 ```
