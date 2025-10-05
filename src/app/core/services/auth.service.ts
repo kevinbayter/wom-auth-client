@@ -37,7 +37,9 @@ export class AuthService {
 
   constructor() {
     this.setupInactivityWatcher();
-    this.checkInitialAuthentication();
+    // IMPORTANT: Do NOT call checkInitialAuthentication() here!
+    // It causes circular dependency: AuthService -> HttpClient -> jwtInterceptor -> AuthService
+    // Will be called via APP_INITIALIZER instead
   }
 
   private setupInactivityWatcher(): void {
@@ -51,28 +53,49 @@ export class AuthService {
     });
   }
 
-  private checkInitialAuthentication(): void {
-    const hasRefreshToken = !!this.tokenService.getRefreshToken();
-    const hasAccessToken = !!this.tokenService.getAccessToken();
+  /**
+   * Check if there's an existing session and attempt recovery
+   * MUST be called via APP_INITIALIZER to avoid circular dependencies
+   * Returns a Promise to ensure app waits for auth state to be resolved
+   */
+  checkInitialAuthentication(): Promise<void> {
+    return new Promise((resolve) => {
+      const hasRefreshToken = !!this.tokenService.getRefreshToken();
+      const hasAccessToken = !!this.tokenService.getAccessToken();
 
-    if (hasRefreshToken && !hasAccessToken) {
-      // Session recovery: refresh token exists but access token was lost (page reload)
-      this.refreshToken().subscribe({
-        next: () => {
-          this.loadCurrentUser().subscribe();
-          this.inactivityService.startWatching();
-        },
-        error: () => {
-          // Refresh token is invalid/expired, clear everything
-          this.clearAuthState();
-        }
-      });
-    } else if (hasAccessToken && hasRefreshToken) {
-      // Both tokens exist, load user profile
-      this.isAuthenticated.set(true);
-      this.loadCurrentUser().subscribe();
-      this.inactivityService.startWatching();
-    }
+      if (hasRefreshToken && !hasAccessToken) {
+        // Session recovery: refresh token exists but access token was lost (page reload)
+        this.refreshToken().subscribe({
+          next: () => {
+            this.loadCurrentUser().subscribe({
+              next: () => {
+                this.inactivityService.startWatching();
+                resolve();
+              },
+              error: () => resolve()
+            });
+          },
+          error: () => {
+            // Refresh token is invalid/expired, clear everything and redirect
+            this.clearAuthState();
+            this.router.navigate(['/auth/login']);
+            resolve();
+          }
+        });
+      } else if (hasAccessToken && hasRefreshToken) {
+        // Both tokens exist, load user profile
+        this.isAuthenticated.set(true);
+        this.loadCurrentUser().subscribe({
+          next: () => {
+            this.inactivityService.startWatching();
+            resolve();
+          },
+          error: () => resolve()
+        });
+      } else {
+        resolve();
+      }
+    });
   }
 
   login(credentials: LoginRequest): Observable<LoginResponse> {
@@ -94,7 +117,6 @@ export class AuthService {
     const refreshToken = this.tokenService.getRefreshToken();
     
     if (!refreshToken) {
-      this.logout().subscribe();
       return throwError(() => new Error('No refresh token available'));
     }
 
@@ -108,7 +130,7 @@ export class AuthService {
         this.isAuthenticated.set(true);
       }),
       catchError(error => {
-        this.logout().subscribe();
+        // Let the caller handle the error
         return throwError(() => error);
       })
     );

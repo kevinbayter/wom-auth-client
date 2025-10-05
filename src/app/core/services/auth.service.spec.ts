@@ -156,7 +156,7 @@ describe('AuthService', () => {
       req.flush(mockRefreshResponse);
     });
 
-    it('should logout when no refresh token is available', (done) => {
+    it('should return error when no refresh token is available', (done) => {
       service.refreshToken().subscribe({
         error: (error) => {
           expect(error.message).toBe('No refresh token available');
@@ -164,8 +164,8 @@ describe('AuthService', () => {
         }
       });
 
-      const logoutReq = httpMock.expectOne(`${API_URL}/logout`);
-      logoutReq.flush({ message: 'Logged out' });
+      // No HTTP request should be made
+      httpMock.verify();
     });
 
     // Tests parametrizados para diferentes errores HTTP
@@ -176,22 +176,21 @@ describe('AuthService', () => {
     ];
 
     refreshErrorCases.forEach(({ status, statusText, description }) => {
-      it(`should logout on refresh token ${description} error`, (done) => {
+      it(`should return error on refresh token ${description} error`, (done) => {
         tokenService.setRefreshToken('invalid-refresh-token');
 
         service.refreshToken().subscribe({
           error: (error) => {
             expect(error).toBeDefined();
-            expect(service.isAuthenticated$()).toBe(false);
             done();
           }
         });
 
         const refreshReq = httpMock.expectOne(`${API_URL}/refresh`);
         refreshReq.flush('Invalid token', { status, statusText });
-
-        const logoutReq = httpMock.expectOne(`${API_URL}/logout`);
-        logoutReq.flush({ message: 'Logged out' });
+        
+        // refreshToken() no longer calls logout() - the caller handles the error
+        httpMock.verify(); // No pending requests
       });
     });
   });
