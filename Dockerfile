@@ -55,4 +55,4 @@ RUN pnpm install --frozen-lockfile
 EXPOSE 4200
 
 # Start development server
-CMD ["pnpm", "start", "--", "--host", "0.0.0.0", "--poll", "2000"]
+CMD ["pnpm", "exec", "ng", "serve", "--host", "0.0.0.0", "--poll", "2000"]
