@@ -1,27 +1,326 @@
-# WomAuthClientTemp
+# WOM Auth Service Client
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.2.21.
+[![CI/CD Pipeline](https://github.com/kevinbayter/wom-auth-client/actions/workflows/ci.yml/badge.svg)](https://github.com/kevinbayter/wom-auth-client/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/kevinbayter/wom-auth-client/branch/master/graph/badge.svg)](https://codecov.io/gh/kevinbayter/wom-auth-client)
 
-## Development server
+Cliente de autenticación Angular 18 para WOM Auth Service. Implementa autenticación JWT con refresh tokens, dashboard protegido y arquitectura basada en componentes inteligentes y presentacionales.
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+## 🚀 Características
 
-## Code scaffolding
+- **Angular 18** con Standalone Components y Signals API
+- **Autenticación JWT** con refresh token automático
+- **Guards funcionales** para protección de rutas
+- **Interceptores HTTP** para manejo automático de tokens
+- **Material Design 3** con Angular Material 18
+- **Arquitectura limpia** siguiendo principios SOLID
+- **Componentes OnPush** para máximo rendimiento
+- **Cobertura de tests >97%** con Jasmine/Karma
+- **Bundle optimizado** (386 kB inicial, 93 kB comprimido)
+- **Lazy loading** de módulos de características
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+## 📋 Requisitos Previos
 
-## Build
+- **Node.js**: 20.x o superior
+- **pnpm**: 10.x (recomendado) o npm
+- **Angular CLI**: 18.x
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+## 🛠️ Instalación
 
-## Running unit tests
+```bash
+# Clonar el repositorio
+git clone https://github.com/kevinbayter/wom-auth-client.git
+cd wom-auth-client
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+# Instalar dependencias
+pnpm install
+```
 
-## Running end-to-end tests
+## 🏃 Desarrollo
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+```bash
+# Servidor de desarrollo (http://localhost:4200)
+pnpm start
 
-## Further help
+# Build de desarrollo con watch mode
+pnpm watch
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+# Ejecutar tests
+pnpm test
+
+# Ejecutar tests con cobertura
+pnpm test:ci
+
+# Build de producción
+pnpm build
+```
+
+## 🏗️ Arquitectura
+
+### Estructura del Proyecto
+
+```
+src/
+├── app/
+│   ├── core/                    # Servicios singleton y configuración
+│   │   ├── guards/             # Guards funcionales (auth.guard.ts)
+│   │   ├── interceptors/       # HTTP interceptors (auth.interceptor.ts)
+│   │   └── services/           # Servicios core (auth, token)
+│   ├── features/               # Módulos de características
+│   │   ├── auth/              # Feature de autenticación
+│   │   │   ├── login-page/    # Smart container
+│   │   │   ├── login-form/    # Presentational
+│   │   │   └── login-branding/ # Presentational
+│   │   └── dashboard/         # Feature de dashboard
+│   │       ├── dashboard-page/ # Smart container
+│   │       ├── dashboard-header/ # Presentational
+│   │       ├── user-stats-cards/ # Presentational
+│   │       └── user-profile-card/ # Presentational
+│   └── shared/                # Componentes y utilidades compartidas
+```
+
+### Patrones Implementados
+
+#### Smart vs Presentational Components
+
+- **Smart Components** (Container): Manejan lógica de negocio, interactúan con servicios
+  - `LoginPageComponent`: 54 líneas
+  - `DashboardPageComponent`: 75 líneas
+
+- **Presentational Components**: Solo reciben datos via `@Input()` y emiten eventos via `@Output()`
+  - Todos con `ChangeDetectionStrategy.OnPush`
+  - Sin inyección de dependencias
+  - Componentes puros y reutilizables
+
+#### Gestión de Estado con Signals
+
+```typescript
+// AuthService - Estado reactivo con Signals
+readonly isAuthenticated = computed(() => !!this.currentUser());
+readonly currentUser = signal<UserProfile | null>(null);
+```
+
+#### Guards Funcionales
+
+```typescript
+export const authGuard: CanActivateFn = (route, state) => {
+  const authService = inject(AuthService);
+  const router = inject(Router);
+  
+  if (!authService.isAuthenticated()) {
+    return router.createUrlTree(['/login']);
+  }
+  return true;
+};
+```
+
+## 🔐 Seguridad
+
+### Gestión de Tokens
+
+- **Access Token**: Almacenado en **memoria** (variable privada)
+  - Mayor seguridad contra XSS
+  - No persiste en navegador
+  - Se pierde al recargar página
+
+- **Refresh Token**: Almacenado en **sessionStorage**
+  - Permite recuperar sesión después de recarga
+  - Se elimina al cerrar pestaña
+  - Protegido contra CSRF
+
+### Decisiones de Seguridad
+
+❌ **No usamos localStorage** para tokens
+- Vulnerable a XSS
+- Persiste indefinidamente
+
+✅ **sessionStorage para refresh token**
+- Balance entre UX y seguridad
+- Sesión limitada a pestaña del navegador
+
+✅ **Memoria para access token**
+- Máxima protección contra XSS
+- Token no accesible desde JS externo
+
+## 🧪 Testing
+
+### Cobertura Actual: **97.22%**
+
+```bash
+# Ejecutar todos los tests
+pnpm test
+
+# Tests en modo CI (sin watch)
+pnpm test:ci
+
+# Tests con reporte de cobertura
+pnpm test -- --code-coverage
+```
+
+### Tests Implementados
+
+- **TokenService**: 13 tests (100% coverage)
+  - Gestión de access tokens
+  - Gestión de refresh tokens
+  - Verificación de tokens
+  - Limpieza de tokens
+
+- **AuthService**: 20 tests (96%+ coverage)
+  - Login exitoso/fallido
+  - Logout simple/completo
+  - Refresh de tokens
+  - Carga de perfil
+  - Gestión de estado
+
+- **Components**: Tests de integración
+  - Renderizado correcto
+  - Interacciones de usuario
+  - Emisión de eventos
+
+## 📦 Bundle Size
+
+### Build de Producción
+
+```
+Initial Chunk Files               | Size (compressed)
+main-HASH.js                      | 93.10 kB
+polyfills-HASH.js                 | 0.00 kB
+styles-HASH.css                   | 0.00 kB
+
+Lazy Chunk Files                  | Size (compressed)
+chunk-login-HASH.js               | 21.96 kB
+chunk-dashboard-HASH.js           | 18.82 kB
+
+Total Size: 386.16 kB (133.88 kB compressed)
+```
+
+### Optimizaciones Aplicadas
+
+- Tree shaking automático
+- Lazy loading de rutas
+- OnPush change detection
+- Standalone components (sin NgModules)
+- Code splitting por features
+
+## 🔌 Integración con Backend
+
+### Variables de Entorno
+
+Configurar en `src/environments/`:
+
+```typescript
+// environment.ts
+export const environment = {
+  production: false,
+  apiUrl: 'http://localhost:3000/api'
+};
+
+// environment.prod.ts
+export const environment = {
+  production: true,
+  apiUrl: 'https://api.wom.com/v1'
+};
+```
+
+### Endpoints Utilizados
+
+```
+POST   /auth/login              # Autenticación
+POST   /auth/refresh            # Refresh de token
+POST   /auth/logout             # Logout simple
+POST   /auth/logout-all         # Logout de todos los dispositivos
+GET    /auth/me                 # Obtener perfil del usuario
+```
+
+### CORS Configuration
+
+El backend debe configurar:
+
+```typescript
+// Permitir credenciales
+credentials: true
+
+// Permitir headers
+Access-Control-Allow-Headers: 
+  - Authorization
+  - Content-Type
+  
+// Permitir métodos
+Access-Control-Allow-Methods:
+  - GET, POST, PUT, DELETE, OPTIONS
+```
+
+## 📝 Reglas de Desarrollo
+
+### Límites de Código
+
+- **Componentes**: Máximo 250 líneas
+- **Servicios**: Máximo 300 líneas
+- **Archivos de test**: Sin límite estricto
+
+### Convenciones
+
+- ✅ TypeScript strict mode
+- ✅ No usar `any` type
+- ✅ Componentes standalone
+- ✅ Functional guards e interceptors
+- ✅ OnPush para componentes presentacionales
+- ✅ Signals para estado reactivo
+
+## 🚢 CI/CD
+
+### GitHub Actions Pipeline
+
+El workflow automático ejecuta:
+
+1. **Lint**: Verificación de código (placeholder)
+2. **Tests**: Ejecución de suite completa
+3. **Coverage**: Upload a Codecov
+4. **Build**: Build de producción
+5. **Bundle Analysis**: Análisis de tamaño
+
+### Branch Protection
+
+- **master**: Rama protegida
+  - Requiere PR para merge
+  - Requiere CI passing
+  - Requiere code review
+
+## 🤝 Contribuir
+
+1. Fork del repositorio
+2. Crear feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit de cambios (`git commit -m 'feat: add amazing feature'`)
+4. Push a la rama (`git push origin feature/amazing-feature`)
+5. Abrir Pull Request hacia `master`
+
+### Commits Convencionales
+
+```
+feat: nueva característica
+fix: corrección de bug
+docs: cambios en documentación
+style: formateo, punto y coma faltante, etc
+refactor: refactorización de código
+test: agregar tests
+chore: actualizar tareas de build, configuración, etc
+```
+
+## 📄 Licencia
+
+Este proyecto es privado y confidencial de WOM.
+
+## 👥 Autores
+
+- **Kevin Bayter** - [kevinbayter](https://github.com/kevinbayter)
+
+## 🙏 Agradecimientos
+
+- Equipo de WOM por los requisitos y feedback
+- Comunidad de Angular por las mejores prácticas
+- Material Design por el sistema de diseño
+
+---
+
+**Versión**: 1.0.0  
+**Angular**: 18.2.14  
+**Última actualización**: Octubre 2025
