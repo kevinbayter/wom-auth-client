@@ -50,7 +50,7 @@
           [attr.aria-label]="passwordToggleAriaLabel"
           [disabled]="isLoading"
         >
-          <mat-icon>{{ hidePassword ? 'visibility' : 'visibility_off' }}</mat-icon>
+          <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
         </button>
         @if (loginForm.controls['password'].hasError('required')) {
           <mat-error>Password is required</mat-error>
