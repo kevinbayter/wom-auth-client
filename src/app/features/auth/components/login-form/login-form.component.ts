@@ -54,4 +54,8 @@ export class LoginFormComponent {
   protected togglePasswordVisibility(): void {
     this.hidePassword = !this.hidePassword;
   }
+
+  protected get passwordToggleAriaLabel(): string {
+    return this.hidePassword ? 'Show password' : 'Hide password';
+  }
 }

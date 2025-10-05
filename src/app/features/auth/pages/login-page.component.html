@@ -1,7 +1,10 @@
-<div class="login-container">
-  <app-login-branding></app-login-branding>
-  
-  <div class="login-form-section">
+<div class="login-centered-wrapper">
+  <div class="login-box">
+    <div class="product-header">
+      <div class="logo-circle">WA</div>
+      <h1 class="app-title">WOM Auth</h1>
+      <p class="app-subtitle">Secure Authentication Service</p>
+    </div>
     <app-login-form
       [isLoading]="isLoading()"
       [errorMessage]="errorMessage()"

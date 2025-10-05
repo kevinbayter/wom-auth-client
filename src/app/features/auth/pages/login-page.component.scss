@@ -1,29 +1,70 @@
-.login-container {
+/* Centered single-column layout */
+.login-centered-wrapper {
   min-height: 100vh;
-  display: flex;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-}
-
-.login-form-section {
-  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 40px 24px;
+  padding: 48px 16px;
+  background: radial-gradient(circle at 20% 20%, #e6ecf5 0%, #d5deeb 40%, #c3cfe2 100%);
 }
 
-@media (max-width: 991px) {
-  .login-container {
-    flex-direction: column;
-  }
-
-  .login-form-section {
-    min-height: 100vh;
-  }
+.login-box {
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
 }
 
-@media (max-width: 767px) {
-  .login-form-section {
-    padding: 24px 16px;
-  }
+.product-header {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.logo-circle {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 28px;
+  color: #fff;
+  letter-spacing: 1px;
+  box-shadow: 0 6px 18px -4px rgba(118,75,162,0.4);
+}
+
+.app-title {
+  margin: 0;
+  font-size: 2.4rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 60%, #9333ea 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.app-subtitle {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #5a6375;
+  font-weight: 500;
+  letter-spacing: .5px;
+}
+
+/* Tighten card spacing from login form child */
+:host ::ng-deep .login-card {
+  box-shadow: 0 8px 28px -6px rgba(71, 85, 105, 0.25);
+  border: 1px solid rgba(99,102,241,0.15);
+}
+
+@media (max-width: 480px) {
+  .app-title { font-size: 2rem; }
+  .logo-circle { width:72px; height:72px; font-size:24px; }
+  .login-centered-wrapper { padding: 32px 12px; }
 }
