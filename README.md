@@ -219,6 +219,14 @@ export const authGuard: CanActivateFn = (route, state) => {
 - Advertencia de bloqueo inminente (5 intentos = 30 min bloqueado)
 - Mensaje de intentos restantes antes del bloqueo
 
+## Pruebas
+
+### Bloqueo por Intentos Fallidos
+![Bloqueo por Intentos Fallidos](pruebas/videos/blocked_by_failed_retries.gif)
+
+### Login, Refresh y Logout
+![Login, Refresh y Logout](pruebas/videos/login_token_refresh_logout.gif)
+
 ## 🧪 Testing
 
 ### Cobertura Actual: **97.22%**
@@ -363,15 +371,8 @@ El workflow automático ejecuta:
   - Requiere CI passing
   - Requiere code review
 
-## � Pruebas
 
-### Bloqueo por Intentos Fallidos
-![Bloqueo por Intentos Fallidos](pruebas/videos/blocked_by_failed_retries.gif)
-
-### Login, Refresh y Logout
-![Login, Refresh y Logout](pruebas/videos/login_token_refresh_logout.gif)
-
-## �🤝 Contribuir
+## 🤝 Contribuir
 
 1. Fork del repositorio
 2. Crear feature branch (`git checkout -b feature/amazing-feature`)
