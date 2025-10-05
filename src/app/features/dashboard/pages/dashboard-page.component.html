@@ -1,11 +1,29 @@
 <div class="dashboard-container">
-  <app-dashboard-header
-    [user]="currentUser()"
-    [userInitials]="userInitials()"
-    (refresh)="handleRefresh()"
-    (logout)="handleLogout()"
-    (logoutAll)="handleLogoutAll()"
-  ></app-dashboard-header>
+  <!-- Loading State -->
+  <div *ngIf="isLoading()" class="loading-container">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Cargando información del usuario...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error() && !isLoading()" class="error-container">
+    <mat-icon color="warn">error_outline</mat-icon>
+    <p>{{ error() }}</p>
+    <button mat-raised-button color="primary" (click)="handleRefresh()">
+      <mat-icon>refresh</mat-icon>
+      Reintentar
+    </button>
+  </div>
+
+  <!-- Main Content (loaded state) -->
+  <ng-container *ngIf="!isLoading() && !error() && currentUser()">
+    <app-dashboard-header
+      [user]="currentUser()"
+      [userInitials]="userInitials()"
+      (refresh)="handleRefresh()"
+      (logout)="handleLogout()"
+      (logoutAll)="handleLogoutAll()"
+    ></app-dashboard-header>
 
   <div class="main-content">
     <section class="hero-section">
@@ -24,7 +42,7 @@
     </section>
 
     <section class="stats-section">
-      <app-user-stats-cards [userId]="currentUser()?.id"></app-user-stats-cards>
+      <app-user-stats-cards [user]="currentUser()"></app-user-stats-cards>
     </section>
 
     <section class="profile-section">
@@ -35,5 +53,5 @@
         (logout)="handleLogout()"
       ></app-user-profile-card>
     </section>
-  </div>
+  </ng-container>
 </div>

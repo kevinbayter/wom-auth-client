@@ -2,7 +2,7 @@
   <div class="card-header">
     <div class="header-left">
       <mat-icon class="header-icon">account_box</mat-icon>
-      <h2 class="card-title">Profile Information</h2>
+      <h2 class="card-title">Información del Perfil</h2>
     </div>
     <button mat-icon-button (click)="onRefresh()" class="refresh-btn">
       <mat-icon>refresh</mat-icon>
@@ -19,7 +19,7 @@
         <p class="profile-email">{{ user.email }}</p>
         <div class="profile-badge">
           <mat-icon>verified</mat-icon>
-          <span>Verified Account</span>
+          <span>Cuenta Verificada</span>
         </div>
       </div>
     </div>
@@ -32,7 +32,7 @@
           <mat-icon>badge</mat-icon>
         </div>
         <div class="detail-content">
-          <label>Username</label>
+          <label>Usuario</label>
           <p>{{ user.username }}</p>
         </div>
       </div>
@@ -42,7 +42,7 @@
           <mat-icon>email</mat-icon>
         </div>
         <div class="detail-content">
-          <label>Email Address</label>
+          <label>Correo Electrónico</label>
           <p>{{ user.email }}</p>
         </div>
       </div>
@@ -63,7 +63,7 @@
         </div>
         <div class="detail-content">
           <label>Estado</label>
-          <p class="status-active">Activo & Verificado</p>
+          <p class="status-active">{{ user.status }}</p>
         </div>
       </div>
     </div>
@@ -72,11 +72,11 @@
   <mat-card-actions class="card-actions">
     <button mat-stroked-button color="primary" (click)="onRefresh()">
       <mat-icon>refresh</mat-icon>
-      Refresh Data
+      Actualizar Datos
     </button>
     <button mat-raised-button color="warn" (click)="onLogout()">
       <mat-icon>logout</mat-icon>
-      Sign Out
+      Cerrar Sesión
     </button>
   </mat-card-actions>
 </mat-card>
