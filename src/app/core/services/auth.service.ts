@@ -36,8 +36,8 @@ export class AuthService {
   public readonly currentUser$ = this.currentUser.asReadonly();
 
   constructor() {
-    this.checkInitialAuthentication();
     this.setupInactivityWatcher();
+    this.checkInitialAuthentication();
   }
 
   private setupInactivityWatcher(): void {
