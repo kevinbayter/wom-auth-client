@@ -6,7 +6,7 @@
 
 [![Jasmine](https://img.shields.io/badge/Jasmine-5.x-8A4182?style=for-the-badge&logo=jasmine&logoColor=white)](https://jasmine.github.io/) [![Karma](https://img.shields.io/badge/Karma-6.x-429239?style=for-the-badge&logo=karma&logoColor=white)](https://karma-runner.github.io/) [![Coverage](https://img.shields.io/badge/Coverage-97.22%25-success?style=for-the-badge)](https://github.com/kevinbayter/wom-auth-client)
 
-[![PNPM](https://img.shields.io/badge/pnpm-10.x-F69220?style=for-the-badge&logo=pnpm&logoColor=white)](https://pnpm.io/) [![Node](https://img.shields.io/badge/Node.js-20.x-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/) [![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/) [![License](https://img.shields.io/badge/License-Private-red?style=for-the-badge)](https://github.com/kevinbayter/wom-auth-client)
+[![PNPM](https://img.shields.io/badge/pnpm-10.x-F69220?style=for-the-badge&logo=pnpm&logoColor=white)](https://pnpm.io/) [![Node](https://img.shields.io/badge/Node.js-20.x-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/) [![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/) [![Nginx](https://img.shields.io/badge/Nginx-1.25-009639?style=for-the-badge&logo=nginx&logoColor=white)](https://nginx.org/) [![Fly.io](https://img.shields.io/badge/Fly.io-Deployed-7B2BF9?style=for-the-badge&logo=fly&logoColor=white)](https://fly.io/) [![License](https://img.shields.io/badge/License-Private-red?style=for-the-badge)](https://github.com/kevinbayter/wom-auth-client)
 
 </div>
 
@@ -27,6 +27,12 @@ Cliente de autenticación Angular 18 para WOM Auth Service. Implementa autentica
 - **Bundle optimizado** (386 kB inicial, 93 kB comprimido)
 - **Lazy loading** de módulos de características
 - **Manejo avanzado de errores** con UI feedback (Rate Limiting, Account Locking)
+
+## 🌐 Producción
+
+**URL Frontend**: https://wom-auth-service-client.fly.dev
+
+> **Nota**: El login puede tardar algunos segundos la primera vez ya que el backend está corriendo en una máquina serverless.
 
 ## 📋 Requisitos Previos
 
@@ -184,7 +190,7 @@ export const authGuard: CanActivateFn = (route, state) => {
 
 ### Decisiones de Seguridad
 
-❌ **No usamos localStorage** para tokens
+❌ **No use localStorage** para tokens
 - Vulnerable a XSS
 - Persiste indefinidamente
 
@@ -357,7 +363,15 @@ El workflow automático ejecuta:
   - Requiere CI passing
   - Requiere code review
 
-## 🤝 Contribuir
+## � Pruebas
+
+### Bloqueo por Intentos Fallidos
+![Bloqueo por Intentos Fallidos](pruebas/videos/blocked_by_failed_retries.gif)
+
+### Login, Refresh y Logout
+![Login, Refresh y Logout](pruebas/videos/login_token_refresh_logout.gif)
+
+## �🤝 Contribuir
 
 1. Fork del repositorio
 2. Crear feature branch (`git checkout -b feature/amazing-feature`)

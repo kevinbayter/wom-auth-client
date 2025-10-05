@@ -21,22 +21,7 @@ COPY . .
 # Build the application for production
 RUN pnpm build
 
-# Stage 2: Production environment with Nginx
-FROM nginx:alpine AS production
-
-# Copy custom nginx config
-COPY nginx.conf /etc/nginx/nginx.conf
-
-# Copy built application from builder stage
-COPY --from=builder /app/dist/wom-auth-client-temp/browser /usr/share/nginx/html
-
-# Expose port 80
-EXPOSE 80
-
-# Start nginx
-CMD ["nginx", "-g", "daemon off;"]
-
-# Stage 3: Development environment
+# Stage 2: Development environment
 FROM node:20-alpine AS development
 
 # Set working directory
@@ -56,3 +41,18 @@ EXPOSE 4200
 
 # Start development server
 CMD ["pnpm", "exec", "ng", "serve", "--host", "0.0.0.0", "--poll", "2000"]
+
+# Stage 3: Production environment with Nginx
+FROM nginx:alpine AS production
+
+# Copy custom nginx config
+COPY nginx.conf /etc/nginx/nginx.conf
+
+# Copy built application from builder stage
+COPY --from=builder /app/dist/wom-auth-client-temp/browser /usr/share/nginx/html
+
+# Expose port 80
+EXPOSE 80
+
+# Start nginx
+CMD ["nginx", "-g", "daemon off;"]
