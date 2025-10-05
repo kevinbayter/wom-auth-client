@@ -3,6 +3,15 @@
 [![CI/CD Pipeline](https://github.com/kevinbayter/wom-auth-client/actions/workflows/ci.yml/badge.svg)](https://github.com/kevinbayter/wom-auth-client/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/kevinbayter/wom-auth-client/branch/master/graph/badge.svg)](https://codecov.io/gh/kevinbayter/wom-auth-client)
 
+![Angular](https://img.shields.io/badge/Angular-18.2.14-DD0031?style=for-the-badge&logo=angular&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.5.4-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
+![Material](https://img.shields.io/badge/Material-18.2.14-757575?style=for-the-badge&logo=material-design&logoColor=white)
+![RxJS](https://img.shields.io/badge/RxJS-7.8-B7178C?style=for-the-badge&logo=reactivex&logoColor=white)
+![Jasmine](https://img.shields.io/badge/Jasmine-Testing-8A4182?style=for-the-badge&logo=jasmine&logoColor=white)
+![Karma](https://img.shields.io/badge/Karma-Test_Runner-429239?style=for-the-badge&logo=karma&logoColor=white)
+![PNPM](https://img.shields.io/badge/pnpm-10.18.0-F69220?style=for-the-badge&logo=pnpm&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js-20.x-339933?style=for-the-badge&logo=node.js&logoColor=white)
+
 Cliente de autenticación Angular 18 para WOM Auth Service. Implementa autenticación JWT con refresh tokens, dashboard protegido y arquitectura basada en componentes inteligentes y presentacionales.
 
 ## 🚀 Características
@@ -304,10 +313,6 @@ refactor: refactorización de código
 test: agregar tests
 chore: actualizar tareas de build, configuración, etc
 ```
-
-## 📄 Licencia
-
-Este proyecto es privado y confidencial de WOM.
 
 ## 👥 Autores
 
