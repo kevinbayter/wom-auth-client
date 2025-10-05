@@ -3,6 +3,7 @@ import { HttpClientTestingModule, HttpTestingController } from '@angular/common/
 import { Router } from '@angular/router';
 import { AuthService } from './auth.service';
 import { TokenService } from './token.service';
+import { InactivityService } from './inactivity.service';
 import { environment } from '@env/environment';
 import { LoginRequest, LoginResponse, RefreshTokenResponse, User } from '@shared/models';
 
@@ -11,6 +12,7 @@ describe('AuthService', () => {
   let httpMock: HttpTestingController;
   let tokenService: TokenService;
   let router: Router;
+  let inactivityService: InactivityService;
 
   const API_URL = `${environment.apiUrl}/auth`;
 
@@ -51,6 +53,7 @@ describe('AuthService', () => {
       providers: [
         AuthService,
         TokenService,
+        InactivityService,
         { provide: Router, useValue: routerSpy }
       ]
     });
@@ -59,6 +62,7 @@ describe('AuthService', () => {
     httpMock = TestBed.inject(HttpTestingController);
     tokenService = TestBed.inject(TokenService);
     router = TestBed.inject(Router);
+    inactivityService = TestBed.inject(InactivityService);
 
     sessionStorage.clear();
   });
@@ -87,12 +91,15 @@ describe('AuthService', () => {
 
   describe('Login', () => {
     it('should successfully login and store tokens', (done) => {
+      spyOn(inactivityService, 'startWatching');
+
       service.login(mockLoginRequest).subscribe({
         next: (response) => {
           expect(response).toEqual(mockLoginResponse);
           expect(tokenService.getAccessToken()).toBe(mockLoginResponse.accessToken);
           expect(tokenService.getRefreshToken()).toBe(mockLoginResponse.refreshToken);
           expect(service.isAuthenticated$()).toBe(true);
+          expect(inactivityService.startWatching).toHaveBeenCalled();
           done();
         }
       });
@@ -104,17 +111,27 @@ describe('AuthService', () => {
       req.flush(mockLoginResponse);
     });
 
-    it('should set isAuthenticated to false on login error', (done) => {
-      service.login(mockLoginRequest).subscribe({
-        error: (error) => {
-          expect(service.isAuthenticated$()).toBe(false);
-          expect(error.status).toBe(401);
-          done();
-        }
-      });
+    // Tests parametrizados para diferentes errores de login
+    const loginErrorCases = [
+      { status: 401, statusText: 'Unauthorized', description: 'invalid credentials' },
+      { status: 403, statusText: 'Forbidden', description: 'account disabled' },
+      { status: 429, statusText: 'Too Many Requests', description: 'rate limit exceeded' },
+      { status: 500, statusText: 'Server Error', description: 'server error' }
+    ];
 
-      const req = httpMock.expectOne(`${API_URL}/login`);
-      req.flush('Invalid credentials', { status: 401, statusText: 'Unauthorized' });
+    loginErrorCases.forEach(({ status, statusText, description }) => {
+      it(`should set isAuthenticated to false on login error: ${description}`, (done) => {
+        service.login(mockLoginRequest).subscribe({
+          error: (error) => {
+            expect(service.isAuthenticated$()).toBe(false);
+            expect(error.status).toBe(status);
+            done();
+          }
+        });
+
+        const req = httpMock.expectOne(`${API_URL}/login`);
+        req.flush(`Error: ${description}`, { status, statusText });
+      });
     });
   });
 
@@ -151,22 +168,31 @@ describe('AuthService', () => {
       logoutReq.flush({ message: 'Logged out' });
     });
 
-    it('should logout on refresh token error', (done) => {
-      tokenService.setRefreshToken('invalid-refresh-token');
+    // Tests parametrizados para diferentes errores HTTP
+    const refreshErrorCases = [
+      { status: 401, statusText: 'Unauthorized', description: '401 Unauthorized' },
+      { status: 403, statusText: 'Forbidden', description: '403 Forbidden' },
+      { status: 500, statusText: 'Server Error', description: '500 Server Error' }
+    ];
 
-      service.refreshToken().subscribe({
-        error: (error) => {
-          expect(error).toBeDefined();
-          expect(service.isAuthenticated$()).toBe(false);
-          done();
-        }
+    refreshErrorCases.forEach(({ status, statusText, description }) => {
+      it(`should logout on refresh token ${description} error`, (done) => {
+        tokenService.setRefreshToken('invalid-refresh-token');
+
+        service.refreshToken().subscribe({
+          error: (error) => {
+            expect(error).toBeDefined();
+            expect(service.isAuthenticated$()).toBe(false);
+            done();
+          }
+        });
+
+        const refreshReq = httpMock.expectOne(`${API_URL}/refresh`);
+        refreshReq.flush('Invalid token', { status, statusText });
+
+        const logoutReq = httpMock.expectOne(`${API_URL}/logout`);
+        logoutReq.flush({ message: 'Logged out' });
       });
-
-      const refreshReq = httpMock.expectOne(`${API_URL}/refresh`);
-      refreshReq.flush('Invalid token', { status: 401, statusText: 'Unauthorized' });
-
-      const logoutReq = httpMock.expectOne(`${API_URL}/logout`);
-      logoutReq.flush({ message: 'Logged out' });
     });
   });
 
@@ -201,6 +227,7 @@ describe('AuthService', () => {
 
   describe('Logout', () => {
     it('should successfully logout and clear state', (done) => {
+      spyOn(inactivityService, 'stopWatching');
       tokenService.setAccessToken('access-token');
       tokenService.setRefreshToken('refresh-token');
       service['isAuthenticated'].set(true);
@@ -212,6 +239,7 @@ describe('AuthService', () => {
           expect(service.isAuthenticated$()).toBe(false);
           expect(service.currentUser$()).toBeNull();
           expect(router.navigate).toHaveBeenCalledWith(['/auth/login']);
+          expect(inactivityService.stopWatching).toHaveBeenCalled();
           done();
         }
       });
@@ -222,25 +250,34 @@ describe('AuthService', () => {
       req.flush({ message: 'Logged out successfully' });
     });
 
-    it('should clear state and navigate even on logout error', (done) => {
-      tokenService.setAccessToken('access-token');
+    // Tests parametrizados para diferentes errores de logout
+    const logoutErrorCases = [
+      { status: 401, statusText: 'Unauthorized', description: 'unauthorized' },
+      { status: 500, statusText: 'Server Error', description: 'server error' },
+      { status: 503, statusText: 'Service Unavailable', description: 'service unavailable' }
+    ];
 
-      service.logout().subscribe({
-        next: () => {
-          // Logout still completes the tap() which navigates
-          expect(service.isAuthenticated$()).toBe(false);
-          expect(router.navigate).toHaveBeenCalledWith(['/auth/login']);
-          done();
-        },
-        error: (error) => {
-          // catchError converts to throwError, so we end up here
-          expect(error).toBeDefined();
-          done();
-        }
+    logoutErrorCases.forEach(({ status, statusText, description }) => {
+      it(`should clear state and navigate even on logout error: ${description}`, (done) => {
+        tokenService.setAccessToken('access-token');
+
+        service.logout().subscribe({
+          next: () => {
+            // Logout still completes the tap() which navigates
+            expect(service.isAuthenticated$()).toBe(false);
+            expect(router.navigate).toHaveBeenCalledWith(['/auth/login']);
+            done();
+          },
+          error: (error) => {
+            // catchError converts to throwError, so we end up here
+            expect(error).toBeDefined();
+            done();
+          }
+        });
+
+        const req = httpMock.expectOne(`${API_URL}/logout`);
+        req.flush(`Error: ${description}`, { status, statusText });
       });
-
-      const req = httpMock.expectOne(`${API_URL}/logout`);
-      req.flush('Error', { status: 500, statusText: 'Server Error' });
     });
   });
 
@@ -265,17 +302,26 @@ describe('AuthService', () => {
       req.flush({ message: 'All sessions logged out' });
     });
 
-    it('should clear state and navigate on error', (done) => {
-      service.logoutAll().subscribe({
-        error: () => {
-          expect(service.isAuthenticated$()).toBe(false);
-          expect(router.navigate).toHaveBeenCalledWith(['/auth/login']);
-          done();
-        }
-      });
+    // Tests parametrizados para diferentes errores de logout-all
+    const logoutAllErrorCases = [
+      { status: 401, statusText: 'Unauthorized', description: 'unauthorized' },
+      { status: 500, statusText: 'Server Error', description: 'server error' },
+      { status: 504, statusText: 'Gateway Timeout', description: 'gateway timeout' }
+    ];
 
-      const req = httpMock.expectOne(`${API_URL}/logout-all`);
-      req.flush('Error', { status: 500, statusText: 'Server Error' });
+    logoutAllErrorCases.forEach(({ status, statusText, description }) => {
+      it(`should clear state and navigate on error: ${description}`, (done) => {
+        service.logoutAll().subscribe({
+          error: () => {
+            expect(service.isAuthenticated$()).toBe(false);
+            expect(router.navigate).toHaveBeenCalledWith(['/auth/login']);
+            done();
+          }
+        });
+
+        const req = httpMock.expectOne(`${API_URL}/logout-all`);
+        req.flush(`Error: ${description}`, { status, statusText });
+      });
     });
   });
 
@@ -298,6 +344,7 @@ describe('AuthService', () => {
 
   describe('Clear Auth State', () => {
     it('should clear all authentication state', () => {
+      spyOn(inactivityService, 'stopWatching');
       tokenService.setAccessToken('access-token');
       tokenService.setRefreshToken('refresh-token');
       service['isAuthenticated'].set(true);
@@ -309,6 +356,40 @@ describe('AuthService', () => {
       expect(tokenService.getRefreshToken()).toBeNull();
       expect(service.isAuthenticated$()).toBe(false);
       expect(service.currentUser$()).toBeNull();
+      expect(inactivityService.stopWatching).toHaveBeenCalled();
+    });
+  });
+
+  describe('Inactivity Integration', () => {
+    it('should trigger logout when inactivity is detected', (done) => {
+      tokenService.setAccessToken('access-token');
+      tokenService.setRefreshToken('refresh-token');
+      service['isAuthenticated'].set(true);
+
+      // Trigger the inactivity event
+      service['inactivityService']['inactivitySubject$'].next();
+
+      // Give time for async operations
+      setTimeout(() => {
+        const req = httpMock.expectOne(`${API_URL}/logout`);
+        req.flush({ message: 'Logged out' });
+        
+        expect(service.isAuthenticated$()).toBe(false);
+        expect(router.navigate).toHaveBeenCalledWith(['/auth/login']);
+        done();
+      }, 100);
+    });
+
+    it('should not trigger logout when not authenticated during inactivity', () => {
+      service['isAuthenticated'].set(false);
+      
+      const logoutSpy = spyOn(service, 'logout');
+      
+      // Trigger the inactivity event
+      service['inactivityService']['inactivitySubject$'].next();
+
+      // Logout should not be called
+      expect(logoutSpy).not.toHaveBeenCalled();
     });
   });
 });

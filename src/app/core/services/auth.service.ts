@@ -6,6 +6,7 @@ import { catchError, map, tap } from 'rxjs/operators';
 
 import { environment } from '@env/environment';
 import { TokenService } from './token.service';
+import { InactivityService } from './inactivity.service';
 import {
   LoginRequest,
   LoginResponse,
@@ -24,6 +25,7 @@ export class AuthService {
   private readonly http = inject(HttpClient);
   private readonly router = inject(Router);
   private readonly tokenService = inject(TokenService);
+  private readonly inactivityService = inject(InactivityService);
   
   private readonly API_URL = `${environment.apiUrl}/auth`;
   
@@ -35,6 +37,18 @@ export class AuthService {
 
   constructor() {
     this.checkInitialAuthentication();
+    this.setupInactivityWatcher();
+  }
+
+  private setupInactivityWatcher(): void {
+    this.inactivityService.onInactivity$.subscribe(() => {
+      if (this.isAuthenticated()) {
+        if (!environment.production) {
+          console.log('[AuthService] Auto-logout due to inactivity');
+        }
+        this.logout().subscribe();
+      }
+    });
   }
 
   private checkInitialAuthentication(): void {
@@ -46,6 +60,7 @@ export class AuthService {
       this.refreshToken().subscribe({
         next: () => {
           this.loadCurrentUser().subscribe();
+          this.inactivityService.startWatching();
         },
         error: () => {
           // Refresh token is invalid/expired, clear everything
@@ -56,6 +71,7 @@ export class AuthService {
       // Both tokens exist, load user profile
       this.isAuthenticated.set(true);
       this.loadCurrentUser().subscribe();
+      this.inactivityService.startWatching();
     }
   }
 
@@ -65,6 +81,7 @@ export class AuthService {
         this.tokenService.setAccessToken(response.accessToken);
         this.tokenService.setRefreshToken(response.refreshToken);
         this.isAuthenticated.set(true);
+        this.inactivityService.startWatching();
       }),
       catchError(error => {
         this.isAuthenticated.set(false);
@@ -136,6 +153,7 @@ export class AuthService {
   }
 
   private clearAuthState(): void {
+    this.inactivityService.stopWatching();
     this.tokenService.clearTokens();
     this.isAuthenticated.set(false);
     this.currentUser.set(null);
