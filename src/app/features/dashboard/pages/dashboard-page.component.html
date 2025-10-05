@@ -25,33 +25,34 @@
       (logoutAll)="handleLogoutAll()"
     ></app-dashboard-header>
 
-  <div class="main-content">
-    <section class="hero-section">
-      <div class="hero-content">
-        <div class="welcome-badge">
-          <span class="material-icons">verified_user</span>
-          <span>Autenticado</span>
+    <div class="main-content">
+      <section class="hero-section">
+        <div class="hero-content">
+          <div class="welcome-badge">
+            <span class="material-icons">verified_user</span>
+            <span>Autenticado</span>
+          </div>
+          <h1 class="hero-title">
+            ¡Bienvenido <span class="accent">{{ currentUser()?.username }}</span>!
+          </h1>
+          <p class="hero-subtitle">
+            Autenticación exitosa. Ya tienes acceso a todas las funcionalidades.
+          </p>
         </div>
-        <h1 class="hero-title">
-          ¡Bienvenido <span class="accent">{{ currentUser()?.username }}</span>!
-        </h1>
-        <p class="hero-subtitle">
-          Autenticación exitosa. Ya tienes acceso a todas las funcionalidades.
-        </p>
-      </div>
-    </section>
+      </section>
 
-    <section class="stats-section">
-      <app-user-stats-cards [user]="currentUser()"></app-user-stats-cards>
-    </section>
+      <section class="stats-section">
+        <app-user-stats-cards [user]="currentUser()"></app-user-stats-cards>
+      </section>
 
-    <section class="profile-section">
-      <app-user-profile-card
-        [user]="currentUser()"
-        [userInitials]="userInitials()"
-        (refresh)="handleRefresh()"
-        (logout)="handleLogout()"
-      ></app-user-profile-card>
-    </section>
+      <section class="profile-section">
+        <app-user-profile-card
+          [user]="currentUser()"
+          [userInitials]="userInitials()"
+          (refresh)="handleRefresh()"
+          (logout)="handleLogout()"
+        ></app-user-profile-card>
+      </section>
+    </div>
   </ng-container>
 </div>
