@@ -2,18 +2,18 @@
 
 <div align="center">
 
-![Angular](https://img.shields.io/badge/Angular-18.2-DD0031?style=for-the-badge&logo=angular&logoColor=white)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.5-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
-![Angular Material](https://img.shields.io/badge/Material-18.2-757575?style=for-the-badge&logo=material-design&logoColor=white)
-![RxJS](https://img.shields.io/badge/RxJS-7.8-B7178C?style=for-the-badge&logo=reactivex&logoColor=white)
+[![Angular](https://img.shields.io/badge/Angular-18.2-DD0031?style=for-the-badge&logo=angular&logoColor=white)](https://angular.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.5-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Angular Material](https://img.shields.io/badge/Material-18.2-757575?style=for-the-badge&logo=material-design&logoColor=white)](https://material.angular.io/)
+[![RxJS](https://img.shields.io/badge/RxJS-7.8-B7178C?style=for-the-badge&logo=reactivex&logoColor=white)](https://rxjs.dev/)
 
-![Jasmine](https://img.shields.io/badge/Jasmine-5.x-8A4182?style=for-the-badge&logo=jasmine&logoColor=white)
-![Karma](https://img.shields.io/badge/Karma-6.x-429239?style=for-the-badge&logo=karma&logoColor=white)
-![Coverage](https://img.shields.io/badge/Coverage-97.22%25-success?style=for-the-badge)
+[![Jasmine](https://img.shields.io/badge/Jasmine-5.x-8A4182?style=for-the-badge&logo=jasmine&logoColor=white)](https://jasmine.github.io/)
+[![Karma](https://img.shields.io/badge/Karma-6.x-429239?style=for-the-badge&logo=karma&logoColor=white)](https://karma-runner.github.io/)
+[![Coverage](https://img.shields.io/badge/Coverage-97.22%25-success?style=for-the-badge)](https://github.com/kevinbayter/wom-auth-client)
 
-![PNPM](https://img.shields.io/badge/pnpm-10.x-F69220?style=for-the-badge&logo=pnpm&logoColor=white)
-![Node](https://img.shields.io/badge/Node.js-20.x-339933?style=for-the-badge&logo=node.js&logoColor=white)
-![License](https://img.shields.io/badge/License-Private-red?style=for-the-badge)
+[![PNPM](https://img.shields.io/badge/pnpm-10.x-F69220?style=for-the-badge&logo=pnpm&logoColor=white)](https://pnpm.io/)
+[![Node](https://img.shields.io/badge/Node.js-20.x-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/)
+[![License](https://img.shields.io/badge/License-Private-red?style=for-the-badge)](https://github.com/kevinbayter/wom-auth-client)
 
 </div>
 
