@@ -3,7 +3,7 @@
  */
 export const environment = {
   production: true,
-  apiUrl: 'https://api.wom.com',
+  apiUrl: 'https://wom-auth-service-api.fly.dev',
   tokenExpirationBuffer: 60,
   auth: {
     // Inactivity timeout in milliseconds (15 minutes)
