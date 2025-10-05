@@ -49,6 +49,14 @@ WOM_Auth_Service_API.postman_environment.json
 
 # Documentation working files
 instrucciones_prueba.txt
+BACKEND_CORS_SETUP.md
+DASHBOARD_REFACTORING_REPORT.md
+DEVELOPMENT_RULES.md
+INTEGRATION_GUIDE.md
+PLAN_DESARROLLO.md
+PROJECT_STATUS.md
+REFACTORING_SUMMARY.md
+TESTING_SUMMARY.md
 
 # Logs
 logs
