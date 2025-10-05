@@ -1,11 +1,11 @@
-<div class="stats-grid">
+<div class="stats-grid" *ngIf="user">
   <mat-card class="stat-card stat-card-primary">
     <div class="stat-icon">
       <mat-icon>person</mat-icon>
     </div>
     <div class="stat-content">
-      <p class="stat-label">Account Status</p>
-      <h3 class="stat-value">Active</h3>
+      <p class="stat-label">Estado de Cuenta</p>
+      <h3 class="stat-value">{{ user.status }}</h3>
     </div>
   </mat-card>
 
@@ -14,8 +14,8 @@
       <mat-icon>verified_user</mat-icon>
     </div>
     <div class="stat-content">
-      <p class="stat-label">Authentication</p>
-      <h3 class="stat-value">Secured</h3>
+      <p class="stat-label">Autenticación</p>
+      <h3 class="stat-value">Segura</h3>
     </div>
   </mat-card>
 
@@ -24,8 +24,8 @@
       <mat-icon>fingerprint</mat-icon>
     </div>
     <div class="stat-content">
-      <p class="stat-label">User ID</p>
-      <h3 class="stat-value">#{{ userId }}</h3>
+      <p class="stat-label">ID Usuario</p>
+      <h3 class="stat-value">#{{ user.id }}</h3>
     </div>
   </mat-card>
 </div>

@@ -31,6 +31,7 @@ export interface ErrorResponse {
   message: string;
   timestamp: string;
   status: number;
+  lockedUntil?: string; // ISO 8601 timestamp - only for 403 errors
 }
 
 export interface MessageResponse {

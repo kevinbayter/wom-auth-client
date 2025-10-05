@@ -1,0 +1,67 @@
+services:
+  # Development environment
+  dev:
+    build:
+      context: .
+      target: development
+      dockerfile: Dockerfile
+    container_name: wom-auth-client-dev
+    ports:
+      - "4200:4200"
+    volumes:
+      # Mount source code for hot reload
+      - ./src:/app/src:ro
+      - ./angular.json:/app/angular.json:ro
+      - ./tsconfig.json:/app/tsconfig.json:ro
+      - ./tsconfig.app.json:/app/tsconfig.app.json:ro
+      # Named volume for node_modules (avoid mounting from host)
+      - node_modules:/app/node_modules
+    environment:
+      - NODE_ENV=development
+      - CHOKIDAR_USEPOLLING=true
+    networks:
+      - wom-network
+    restart: unless-stopped
+
+  # Production environment (Nginx)
+  prod:
+    build:
+      context: .
+      target: production
+      dockerfile: Dockerfile
+    container_name: wom-auth-client-prod
+    ports:
+      - "8080:80"
+    networks:
+      - wom-network
+    restart: unless-stopped
+    profiles:
+      - production
+
+  # Test environment
+  test:
+    build:
+      context: .
+      target: development
+      dockerfile: Dockerfile
+    container_name: wom-auth-client-test
+    volumes:
+      - ./src:/app/src:ro
+      - ./angular.json:/app/angular.json:ro
+      - ./tsconfig.json:/app/tsconfig.json:ro
+      - ./tsconfig.spec.json:/app/tsconfig.spec.json:ro
+      - ./karma.conf.js:/app/karma.conf.js:ro
+      - node_modules:/app/node_modules
+    command: pnpm test --no-watch --code-coverage
+    networks:
+      - wom-network
+    profiles:
+      - test
+
+volumes:
+  node_modules:
+    driver: local
+
+networks:
+  wom-network:
+    driver: bridge

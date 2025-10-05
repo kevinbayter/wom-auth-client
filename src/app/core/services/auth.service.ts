@@ -6,6 +6,7 @@ import { catchError, map, tap } from 'rxjs/operators';
 
 import { environment } from '@env/environment';
 import { TokenService } from './token.service';
+import { InactivityService } from './inactivity.service';
 import {
   LoginRequest,
   LoginResponse,
@@ -24,6 +25,7 @@ export class AuthService {
   private readonly http = inject(HttpClient);
   private readonly router = inject(Router);
   private readonly tokenService = inject(TokenService);
+  private readonly inactivityService = inject(InactivityService);
   
   private readonly API_URL = `${environment.apiUrl}/auth`;
   
@@ -34,14 +36,66 @@ export class AuthService {
   public readonly currentUser$ = this.currentUser.asReadonly();
 
   constructor() {
-    this.checkInitialAuthentication();
+    this.setupInactivityWatcher();
+    // IMPORTANT: Do NOT call checkInitialAuthentication() here!
+    // It causes circular dependency: AuthService -> HttpClient -> jwtInterceptor -> AuthService
+    // Will be called via APP_INITIALIZER instead
   }
 
-  private checkInitialAuthentication(): void {
-    if (this.tokenService.hasTokens()) {
-      this.isAuthenticated.set(true);
-      this.loadCurrentUser().subscribe();
-    }
+  private setupInactivityWatcher(): void {
+    this.inactivityService.onInactivity$.subscribe(() => {
+      if (this.isAuthenticated()) {
+        if (!environment.production) {
+          console.log('[AuthService] Auto-logout due to inactivity');
+        }
+        this.logout().subscribe();
+      }
+    });
+  }
+
+  /**
+   * Check if there's an existing session and attempt recovery
+   * MUST be called via APP_INITIALIZER to avoid circular dependencies
+   * Returns a Promise to ensure app waits for auth state to be resolved
+   */
+  checkInitialAuthentication(): Promise<void> {
+    return new Promise((resolve) => {
+      const hasRefreshToken = !!this.tokenService.getRefreshToken();
+      const hasAccessToken = !!this.tokenService.getAccessToken();
+
+      if (hasRefreshToken && !hasAccessToken) {
+        // Session recovery: refresh token exists but access token was lost (page reload)
+        this.refreshToken().subscribe({
+          next: () => {
+            this.loadCurrentUser().subscribe({
+              next: () => {
+                this.inactivityService.startWatching();
+                resolve();
+              },
+              error: () => resolve()
+            });
+          },
+          error: () => {
+            // Refresh token is invalid/expired, clear everything and redirect
+            this.clearAuthState();
+            this.router.navigate(['/auth/login']);
+            resolve();
+          }
+        });
+      } else if (hasAccessToken && hasRefreshToken) {
+        // Both tokens exist, load user profile
+        this.isAuthenticated.set(true);
+        this.loadCurrentUser().subscribe({
+          next: () => {
+            this.inactivityService.startWatching();
+            resolve();
+          },
+          error: () => resolve()
+        });
+      } else {
+        resolve();
+      }
+    });
   }
 
   login(credentials: LoginRequest): Observable<LoginResponse> {
@@ -50,6 +104,7 @@ export class AuthService {
         this.tokenService.setAccessToken(response.accessToken);
         this.tokenService.setRefreshToken(response.refreshToken);
         this.isAuthenticated.set(true);
+        this.inactivityService.startWatching();
       }),
       catchError(error => {
         this.isAuthenticated.set(false);
@@ -62,7 +117,6 @@ export class AuthService {
     const refreshToken = this.tokenService.getRefreshToken();
     
     if (!refreshToken) {
-      this.logout().subscribe();
       return throwError(() => new Error('No refresh token available'));
     }
 
@@ -76,7 +130,7 @@ export class AuthService {
         this.isAuthenticated.set(true);
       }),
       catchError(error => {
-        this.logout().subscribe();
+        // Let the caller handle the error
         return throwError(() => error);
       })
     );
@@ -121,6 +175,7 @@ export class AuthService {
   }
 
   private clearAuthState(): void {
+    this.inactivityService.stopWatching();
     this.tokenService.clearTokens();
     this.isAuthenticated.set(false);
     this.currentUser.set(null);

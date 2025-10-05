@@ -1,0 +1,28 @@
+<div class="dialog-container">
+  <div class="dialog-header">
+    <mat-icon class="lock-icon">lock</mat-icon>
+    <h2 mat-dialog-title>Cuenta Bloqueada</h2>
+  </div>
+
+  <mat-dialog-content>
+    <p class="dialog-message">
+      Tu cuenta ha sido bloqueada temporalmente por seguridad debido a múltiples intentos de inicio de sesión fallidos.
+    </p>
+
+    <div class="countdown-container">
+      <mat-icon class="timer-icon">schedule</mat-icon>
+      <div class="countdown-text">
+        <span class="countdown-label">Tiempo restante:</span>
+        <span class="countdown-value">{{ minutesRemaining() }} minutos</span>
+      </div>
+    </div>
+
+    <p class="support-text">
+      Si crees que esto es un error, por favor contacta a nuestro equipo de soporte.
+    </p>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button (click)="close()">Cerrar</button>
+  </mat-dialog-actions>
+</div>

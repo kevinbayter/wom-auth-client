@@ -1,0 +1,22 @@
+# Docker Compose override for development with backend
+
+services:
+  dev:
+    environment:
+      - API_URL=http://backend:8080
+    depends_on:
+      - backend
+
+  # Mock backend service (opcional - reemplazar con tu backend real)
+  backend:
+    image: mockserver/mockserver:latest
+    container_name: wom-auth-backend-mock
+    ports:
+      - "8080:8080"
+    environment:
+      - MOCKSERVER_PROPERTY_FILE=/config/mockserver.properties
+      - MOCKSERVER_INITIALIZATION_JSON_PATH=/config/initializerJson.json
+    networks:
+      - wom-network
+    profiles:
+      - with-backend

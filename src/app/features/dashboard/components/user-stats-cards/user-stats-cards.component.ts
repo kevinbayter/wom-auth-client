@@ -2,6 +2,7 @@ import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
+import { User } from '@shared/models';
 
 /**
  * User statistics cards component - Presentational
@@ -16,5 +17,5 @@ import { MatIconModule } from '@angular/material/icon';
   styleUrls: ['./user-stats-cards.component.scss']
 })
 export class UserStatsCardsComponent {
-  @Input() userId: number | undefined;
+  @Input() user: User | null = null;
 }

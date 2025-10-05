@@ -9,16 +9,10 @@
     <div class="features">
       @for (feature of features; track feature.icon) {
         <div class="feature-item">
-          <mat-icon>{{ feature.icon }}</mat-icon>
-          <span>{{ feature.text }}</span>
+          <mat-icon class="feature-icon">{{ feature.icon }}</mat-icon>
+          <span class="feature-text">{{ feature.text }}</span>
         </div>
       }
-    </div>
-
-    <div class="decorative-elements">
-      <div class="circle circle-1"></div>
-      <div class="circle circle-2"></div>
-      <div class="circle circle-3"></div>
     </div>
   </div>
 </div>

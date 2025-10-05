@@ -3,6 +3,36 @@
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
 }
 
+.loading-container,
+.error-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  padding: 24px;
+  animation: fadeIn 0.3s ease-out;
+
+  p {
+    font-size: 1.125rem;
+    color: #424242;
+    margin: 0;
+  }
+
+  mat-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+  }
+}
+
+.error-container {
+  button {
+    margin-top: 16px;
+  }
+}
+
 .main-content {
   max-width: 1400px;
   margin: 0 auto;
