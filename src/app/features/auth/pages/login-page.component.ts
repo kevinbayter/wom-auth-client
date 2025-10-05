@@ -2,6 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '@app/core/services/auth.service';
+import { firstValueFrom } from 'rxjs';
 import { LoginRequest } from '@shared/models';
 import { LoginFormComponent } from '../components/login-form/login-form.component';
 import { LoginBrandingComponent } from '../components/login-branding/login-branding.component';
@@ -27,9 +28,8 @@ export class LoginPageComponent {
   protected async handleLogin(credentials: LoginRequest): Promise<void> {
     this.isLoading.set(true);
     this.errorMessage.set(null);
-
     try {
-      await this.authService.login(credentials);
+      await firstValueFrom(this.authService.login(credentials));
       await this.router.navigate(['/dashboard']);
     } catch (error: any) {
       this.handleLoginError(error);
@@ -41,14 +41,14 @@ export class LoginPageComponent {
   private handleLoginError(error: any): void {
     const status = error?.status;
     const errorMessages: Record<number, string> = {
-      401: 'Invalid username or password',
-      403: 'Account locked. Please contact support',
-      429: 'Too many login attempts. Please try again later',
-      500: 'Server error. Please try again later',
+      0: 'No se pudo conectar con el servidor',
+      401: 'Usuario o contraseña inválidos',
+      403: 'Cuenta bloqueada. Contacta soporte',
+      429: 'Demasiados intentos. Intenta más tarde',
+      500: 'Error interno. Intenta nuevamente',
     };
-
     this.errorMessage.set(
-      errorMessages[status] || 'An unexpected error occurred. Please try again'
+      errorMessages[status] || 'Ocurrió un error inesperado. Intenta nuevamente'
     );
   }
 }

@@ -1,8 +1,8 @@
 <mat-card class="login-card">
   <mat-card-header>
     <div class="card-header-content">
-      <h2 class="login-title">Welcome Back</h2>
-      <p class="login-subtitle">Sign in to your account</p>
+  <h2 class="login-title">Bienvenido</h2>
+  <p class="login-subtitle">Ingresa a tu cuenta</p>
     </div>
   </mat-card-header>
 
@@ -16,29 +16,29 @@
       }
 
       <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Email or Username</mat-label>
+        <mat-label>Correo o Usuario</mat-label>
         <input
           matInput
           formControlName="identifier"
-          placeholder="Enter your email or username"
+          placeholder="Ingresa tu correo o usuario"
           autocomplete="username"
           [disabled]="isLoading"
         />
         @if (loginForm.controls['identifier'].hasError('required')) {
-          <mat-error>Email or username is required</mat-error>
+          <mat-error>Campo requerido</mat-error>
         }
         @if (loginForm.controls['identifier'].hasError('minlength')) {
-          <mat-error>Must be at least 3 characters</mat-error>
+          <mat-error>Mínimo 3 caracteres</mat-error>
         }
       </mat-form-field>
 
       <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Password</mat-label>
+        <mat-label>Contraseña</mat-label>
         <input
           matInput
           [type]="hidePassword ? 'password' : 'text'"
           formControlName="password"
-          placeholder="Enter your password"
+          placeholder="Ingresa tu contraseña"
           autocomplete="current-password"
           [disabled]="isLoading"
         />
@@ -53,10 +53,10 @@
           <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
         </button>
         @if (loginForm.controls['password'].hasError('required')) {
-          <mat-error>Password is required</mat-error>
+          <mat-error>Campo requerido</mat-error>
         }
         @if (loginForm.controls['password'].hasError('minlength')) {
-          <mat-error>Must be at least 6 characters</mat-error>
+          <mat-error>Mínimo 6 caracteres</mat-error>
         }
       </mat-form-field>
 
@@ -70,11 +70,11 @@
         @if (isLoading) {
           <ng-container>
             <mat-spinner diameter="20" class="button-spinner"></mat-spinner>
-            <span>Signing in...</span>
+            <span>Ingresando...</span>
           </ng-container>
         }
         @if (!isLoading) {
-          <span>Sign In</span>
+          <span>Ingresar</span>
         }
       </button>
     </form>

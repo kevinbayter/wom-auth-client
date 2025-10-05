@@ -56,6 +56,6 @@ export class LoginFormComponent {
   }
 
   protected get passwordToggleAriaLabel(): string {
-    return this.hidePassword ? 'Show password' : 'Hide password';
+    return this.hidePassword ? 'Mostrar contraseña' : 'Ocultar contraseña';
   }
 }
