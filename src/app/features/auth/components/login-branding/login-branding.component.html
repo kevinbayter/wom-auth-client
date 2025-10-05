@@ -1,0 +1,24 @@
+<div class="login-brand">
+  <div class="brand-content">
+    <div class="brand-icon-wrapper">
+      <mat-icon class="brand-icon">security</mat-icon>
+    </div>
+    <h1 class="brand-title">WOM Auth</h1>
+    <p class="brand-subtitle">Secure Authentication Service</p>
+    
+    <div class="features">
+      @for (feature of features; track feature.icon) {
+        <div class="feature-item">
+          <mat-icon>{{ feature.icon }}</mat-icon>
+          <span>{{ feature.text }}</span>
+        </div>
+      }
+    </div>
+
+    <div class="decorative-elements">
+      <div class="circle circle-1"></div>
+      <div class="circle circle-2"></div>
+      <div class="circle circle-3"></div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,46 @@
+<mat-toolbar class="modern-toolbar">
+  <div class="toolbar-content">
+    <div class="brand">
+      <mat-icon class="brand-icon">security</mat-icon>
+      <span class="logo">WOM Auth</span>
+    </div>
+    
+    <div class="toolbar-actions" *ngIf="user">
+      <div class="user-chip">
+        <div class="user-avatar">
+          <span>{{ userInitials }}</span>
+        </div>
+        <span class="user-name-mobile">{{ user.username }}</span>
+        <span class="user-email-desktop">{{ user.email }}</span>
+      </div>
+      <button mat-icon-button [matMenuTriggerFor]="menu" class="menu-button">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+    </div>
+  </div>
+</mat-toolbar>
+
+<mat-menu #menu="matMenu" class="user-menu">
+  <div class="menu-header" *ngIf="user">
+    <div class="menu-avatar">
+      <span>{{ userInitials }}</span>
+    </div>
+    <div class="menu-user-info">
+      <p class="menu-username">{{ user.username }}</p>
+      <p class="menu-email">{{ user.email }}</p>
+    </div>
+  </div>
+  <mat-divider></mat-divider>
+  <button mat-menu-item (click)="onRefresh()">
+    <mat-icon>refresh</mat-icon>
+    <span>Refresh Profile</span>
+  </button>
+  <button mat-menu-item (click)="onLogout()">
+    <mat-icon>logout</mat-icon>
+    <span>Logout</span>
+  </button>
+  <button mat-menu-item (click)="onLogoutAll()" class="logout-all">
+    <mat-icon>exit_to_app</mat-icon>
+    <span>Logout All Devices</span>
+  </button>
+</mat-menu>

@@ -1,1 +1,77 @@
-/* You can add global styles to this file, and also import other style files */
+@use '@angular/material' as mat;
+
+@include mat.core();
+
+$wom-primary: mat.m2-define-palette(mat.$m2-blue-palette, 700);
+$wom-accent: mat.m2-define-palette(mat.$m2-cyan-palette, 400);
+$wom-warn: mat.m2-define-palette(mat.$m2-red-palette);
+
+$wom-theme: mat.m2-define-light-theme((
+  color: (
+    primary: $wom-primary,
+    accent: $wom-accent,
+    warn: $wom-warn,
+  ),
+  typography: mat.m2-define-typography-config(),
+  density: 0,
+));
+
+@include mat.all-component-themes($wom-theme);
+
+:root {
+  --primary-color: #667eea;
+  --primary-dark: #5568d3;
+  --primary-light: #7e8ef0;
+  --accent-color: #764ba2;
+  --accent-light: #9c6dc4;
+  --warn-color: #f44336;
+  --success-color: #4caf50;
+  --info-color: #26c6da;
+  --bg-light: #f5f7fa;
+  --bg-white: #ffffff;
+  --text-primary: #212121;
+  --text-secondary: #757575;
+  --border-color: #e0e0e0;
+  --shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.12);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  font-family: 'Roboto', sans-serif;
+  background-color: var(--bg-light);
+  color: var(--text-primary);
+}
+
+body {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.text-center { text-align: center; }
+.text-muted { color: var(--text-secondary); }
+.mt-2 { margin-top: 16px; }
+.mt-3 { margin-top: 24px; }
+.mb-2 { margin-bottom: 16px; }
+.mb-3 { margin-bottom: 24px; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease;
+}

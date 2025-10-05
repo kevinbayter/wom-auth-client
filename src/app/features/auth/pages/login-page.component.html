@@ -1,0 +1,11 @@
+<div class="login-container">
+  <app-login-branding></app-login-branding>
+  
+  <div class="login-form-section">
+    <app-login-form
+      [isLoading]="isLoading()"
+      [errorMessage]="errorMessage()"
+      (loginSubmit)="handleLogin($event)"
+    ></app-login-form>
+  </div>
+</div>

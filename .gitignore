@@ -40,3 +40,19 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+
+# Postman Collections & Environment files
+*.postman_collection.json
+*.postman_environment.json
+WOM_Auth_Service_API.postman_collection.json
+WOM_Auth_Service_API.postman_environment.json
+
+# Documentation working files
+instrucciones_prueba.txt
+
+# Logs
+logs
+*.log
+
+# OS
+.DS_Store
