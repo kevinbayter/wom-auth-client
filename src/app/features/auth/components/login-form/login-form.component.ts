@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter, Input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Output, EventEmitter, Input, ChangeDetectionStrategy, signal } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
@@ -33,10 +33,28 @@ import { LoginRequest } from '@shared/models';
 export class LoginFormComponent {
   @Input() isLoading = false;
   @Input() errorMessage: string | null = null;
+  @Input() 
+  set failedAttempts(value: number) {
+    this.failedAttemptsSignal.set(value);
+  }
+  
+  @Input()
+  set isRateLimited(value: boolean) {
+    this.isRateLimitedSignal.set(value);
+  }
+
+  @Input()
+  set rateLimitCountdown(value: number) {
+    this.rateLimitCountdownSignal.set(value);
+  }
+
   @Output() loginSubmit = new EventEmitter<LoginRequest>();
 
   protected readonly loginForm: FormGroup;
   protected hidePassword = true;
+  protected readonly failedAttemptsSignal = signal(0);
+  protected readonly isRateLimitedSignal = signal(false);
+  protected readonly rateLimitCountdownSignal = signal(0);
 
   constructor(private readonly fb: FormBuilder) {
     this.loginForm = this.fb.group({
@@ -46,9 +64,17 @@ export class LoginFormComponent {
   }
 
   protected onSubmit(): void {
-    if (this.loginForm.valid && !this.isLoading) {
+    if (this.loginForm.valid && !this.isLoading && !this.isRateLimitedSignal()) {
       this.loginSubmit.emit(this.loginForm.value as LoginRequest);
     }
+  }
+
+  protected get showFailedAttemptsWarning(): boolean {
+    return this.failedAttemptsSignal() >= 3;
+  }
+
+  protected get remainingAttempts(): number {
+    return Math.max(0, 5 - this.failedAttemptsSignal());
   }
 
   protected togglePasswordVisibility(): void {

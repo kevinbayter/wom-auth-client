@@ -26,6 +26,7 @@ Cliente de autenticación Angular 18 para WOM Auth Service. Implementa autentica
 - **Cobertura de tests >97%** con Jasmine/Karma
 - **Bundle optimizado** (386 kB inicial, 93 kB comprimido)
 - **Lazy loading** de módulos de características
+- **Manejo avanzado de errores** con UI feedback (Rate Limiting, Account Locking)
 
 ## 📋 Requisitos Previos
 
@@ -152,6 +153,23 @@ export const authGuard: CanActivateFn = (route, state) => {
 ✅ **Memoria para access token**
 - Máxima protección contra XSS
 - Token no accesible desde JS externo
+
+### Protección Avanzada
+
+#### Rate Limiting (429)
+- Detección automática del header `X-Rate-Limit-Retry-After-Seconds`
+- Countdown visual en tiempo real
+- Deshabilitación temporal del formulario
+
+#### Account Locking (403)
+- Modal informativo con countdown hasta desbloqueo
+- Extracción del timestamp `lockedUntil` del backend
+- Reset automático del contador de intentos fallidos
+
+#### Failed Login Attempts
+- Contador visual de intentos fallidos (mostrado después de 3 intentos)
+- Advertencia de bloqueo inminente (5 intentos = 30 min bloqueado)
+- Mensaje de intentos restantes antes del bloqueo
 
 ## 🧪 Testing
 
