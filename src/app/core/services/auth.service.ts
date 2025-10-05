@@ -38,7 +38,22 @@ export class AuthService {
   }
 
   private checkInitialAuthentication(): void {
-    if (this.tokenService.hasTokens()) {
+    const hasRefreshToken = !!this.tokenService.getRefreshToken();
+    const hasAccessToken = !!this.tokenService.getAccessToken();
+
+    if (hasRefreshToken && !hasAccessToken) {
+      // Session recovery: refresh token exists but access token was lost (page reload)
+      this.refreshToken().subscribe({
+        next: () => {
+          this.loadCurrentUser().subscribe();
+        },
+        error: () => {
+          // Refresh token is invalid/expired, clear everything
+          this.clearAuthState();
+        }
+      });
+    } else if (hasAccessToken && hasRefreshToken) {
+      // Both tokens exist, load user profile
       this.isAuthenticated.set(true);
       this.loadCurrentUser().subscribe();
     }
