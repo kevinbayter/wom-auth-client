@@ -6,7 +6,7 @@
 
 [![Jasmine](https://img.shields.io/badge/Jasmine-5.x-8A4182?style=for-the-badge&logo=jasmine&logoColor=white)](https://jasmine.github.io/) [![Karma](https://img.shields.io/badge/Karma-6.x-429239?style=for-the-badge&logo=karma&logoColor=white)](https://karma-runner.github.io/) [![Coverage](https://img.shields.io/badge/Coverage-97.22%25-success?style=for-the-badge)](https://github.com/kevinbayter/wom-auth-client)
 
-[![PNPM](https://img.shields.io/badge/pnpm-10.x-F69220?style=for-the-badge&logo=pnpm&logoColor=white)](https://pnpm.io/) [![Node](https://img.shields.io/badge/Node.js-20.x-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/) [![License](https://img.shields.io/badge/License-Private-red?style=for-the-badge)](https://github.com/kevinbayter/wom-auth-client)
+[![PNPM](https://img.shields.io/badge/pnpm-10.x-F69220?style=for-the-badge&logo=pnpm&logoColor=white)](https://pnpm.io/) [![Node](https://img.shields.io/badge/Node.js-20.x-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/) [![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/) [![License](https://img.shields.io/badge/License-Private-red?style=for-the-badge)](https://github.com/kevinbayter/wom-auth-client)
 
 </div>
 
@@ -30,27 +30,69 @@ Cliente de autenticación Angular 18 para WOM Auth Service. Implementa autentica
 
 ## 📋 Requisitos Previos
 
+### Opción 1: Docker (Recomendado)
+- **Docker**: 20.10+ 
+- **Docker Compose**: 2.0+
+
+### Opción 2: Local
 - **Node.js**: 20.x o superior
-- **pnpm**: 10.x (recomendado) o npm
+- **pnpm**: 10.x o npm
 - **Angular CLI**: 18.x
 
-## 🛠️ Instalación
+## � Desarrollo con Docker (Recomendado)
+
+### Inicio Rápido
 
 ```bash
 # Clonar el repositorio
 git clone https://github.com/kevinbayter/wom-auth-client.git
 cd wom-auth-client
 
+# Iniciar servidor de desarrollo
+make dev
+# o sin make:
+docker-compose up dev
+
+# Aplicación disponible en http://localhost:4200
+```
+
+### Comandos Docker
+
+```bash
+make dev          # Desarrollo con hot-reload (puerto 4200)
+make prod         # Producción con Nginx (puerto 8080)
+make test         # Ejecutar tests en contenedor
+make logs         # Ver logs
+make shell        # Abrir terminal en contenedor
+make stop         # Detener contenedores
+make clean        # Limpiar todo
+```
+
+### Sin Make
+
+```bash
+# Desarrollo
+docker-compose up dev
+
+# Producción
+docker-compose --profile production up --build prod
+
+# Tests
+docker-compose --profile test run --rm test
+
+# Detener
+docker-compose down
+```
+
+## 🛠️ Instalación Local (Alternativa)
+
+```bash
 # Usar la versión correcta de Node.js (requiere nvm)
 nvm use
 
 # Instalar dependencias
 pnpm install
-```
 
-## 🏃 Desarrollo
-
-```bash
 # Servidor de desarrollo (http://localhost:4200)
 pnpm start
 

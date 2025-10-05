@@ -1,0 +1,49 @@
+# Node
+node_modules
+npm-debug.log
+pnpm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# Build outputs
+dist
+.angular
+.cache
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Git
+.git
+.gitignore
+
+# Tests
+coverage
+*.spec.ts
+e2e
+playwright-report
+test-results
+
+# Documentation (local only)
+DEVELOPMENT_RULES.md
+DEVELOPMENT_PLAN.md
+AUDIT_SYSTEM_API_CONTRACT.md
+instrucciones_prueba.txt
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Docker
+Dockerfile
+.dockerignore
+docker-compose.yml
